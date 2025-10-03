@@ -1,0 +1,71 @@
+package com.br.edu.ufersa.prog_web.mec_tec.customer.api.controller;
+
+import com.br.edu.ufersa.prog_web.mec_tec.customer.api.dto.CreateCustomerDTO;
+import com.br.edu.ufersa.prog_web.mec_tec.customer.api.dto.ReturnCustomerDTO;
+import com.br.edu.ufersa.prog_web.mec_tec.customer.api.dto.UpdateCustomerDTO;
+import com.br.edu.ufersa.prog_web.mec_tec.customer.exception.CustomerAlreadyExistsException;
+import com.br.edu.ufersa.prog_web.mec_tec.customer.exception.CustomerNotFoundException;
+import com.br.edu.ufersa.prog_web.mec_tec.customer.service.CustomerService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/v1/customers")
+public class CustomerController {
+    private final CustomerService service;
+
+    @Autowired
+    public CustomerController(CustomerService service) {
+        this.service = service;
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<ReturnCustomerDTO>> getAll() {
+        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ReturnCustomerDTO> getById(@PathVariable UUID id) {
+        return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
+    }
+
+    @PostMapping()
+    public ResponseEntity<ReturnCustomerDTO> post(@Valid @RequestBody CreateCustomerDTO createCustomerDTO) {
+        return new ResponseEntity<>(service.create(createCustomerDTO), HttpStatus.CREATED);
+    }
+
+    @PutMapping()
+    public ResponseEntity<ReturnCustomerDTO> put(@Valid @RequestBody UpdateCustomerDTO updateCustomerDTO) {
+        return new ResponseEntity<>(service.update(updateCustomerDTO), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(value = CustomerAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> CustomerAlreadyExistsException(CustomerAlreadyExistsException ex) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("statusCode", HttpStatus.UNPROCESSABLE_ENTITY.value());
+        map.put("message", ex.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(value = CustomerNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> CustomerAlreadyExistsException(CustomerNotFoundException ex) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("statusCode", HttpStatus.NOT_FOUND.value());
+        map.put("message", ex.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+    }
+}
