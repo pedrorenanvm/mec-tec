@@ -14,7 +14,7 @@ import java.util.UUID;
 public class ReturnPeaceDTO {
     private UUID id;
     private String name;
-    private int amount;
+    private double price;
     private String brand;
     private String description;
 }

@@ -9,9 +9,12 @@ import com.br.edu.ufersa.prog_web.mec_tec.peace.model.entity.Peace;
 import com.br.edu.ufersa.prog_web.mec_tec.peace.model.repository.PeaceRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Service
@@ -24,12 +27,20 @@ public class PeaceService {
         this.repository = repository;
         this.modelMapper = modelMapper;
     }
+    @Transactional(readOnly = true)
+    public Page<ReturnPeaceDTO> findAll(String searchTerm, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Peace> pageResult;
 
-    public List<ReturnPeaceDTO> findAll() {
-        return repository.findAll().stream()
-                .map(p -> modelMapper.map(p, ReturnPeaceDTO.class))
-                .toList();
+        if (searchTerm == null || searchTerm.isBlank()) {
+            pageResult = repository.findAll(pageable);
+        } else {
+            pageResult = repository.findAllPaginate(searchTerm, pageable);
+        }
+
+        return pageResult.map(e -> modelMapper.map(e, ReturnPeaceDTO.class));
     }
+
 
     public ReturnPeaceDTO findById(UUID id) {
         Peace peace = repository.findById(id)
