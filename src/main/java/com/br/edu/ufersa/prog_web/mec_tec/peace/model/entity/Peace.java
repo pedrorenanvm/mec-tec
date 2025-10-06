@@ -8,8 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "tb_peace")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -24,7 +23,7 @@ public class Peace {
     private String name;
 
     @Column(nullable = false)
-    private int amount;
+    private double price;
 
     @Column(nullable = false)
     private String brand;
