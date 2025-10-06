@@ -8,6 +8,9 @@ import com.br.edu.ufersa.prog_web.mec_tec.peace.exception.PeaceNotFound;
 import com.br.edu.ufersa.prog_web.mec_tec.peace.service.PeaceService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +31,18 @@ public class PeaceController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ReturnPeaceDTO>> getAll() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+    public ResponseEntity<Page<ReturnPeaceDTO>> getAll(
+            @RequestParam(value = "searchTerm", required = false) String searchTerm,
+            @RequestParam(
+                    value = "page",
+                    required = false,
+                    defaultValue = "0") int page,
+            @RequestParam(
+                    value = "size",
+                    required = false,
+                    defaultValue = "10") int size) {
+        String term = (searchTerm == null) ? "" : searchTerm.toLowerCase();
+        return new ResponseEntity<>(service.findAll(term, page, size), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
