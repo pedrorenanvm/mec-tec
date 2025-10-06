@@ -1,8 +1,12 @@
 package com.br.edu.ufersa.prog_web.mec_tec.customer.model.entity;
 
+import com.br.edu.ufersa.prog_web.mec_tec.machine.model.entity.Machine;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -32,4 +36,8 @@ public class Customer {
 
     @Column(nullable = false)
     private String address;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Machine> machines = new ArrayList<>();
 }
