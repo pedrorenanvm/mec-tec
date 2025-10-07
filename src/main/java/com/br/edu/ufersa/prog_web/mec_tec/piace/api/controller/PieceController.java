@@ -1,37 +1,34 @@
-package com.br.edu.ufersa.prog_web.mec_tec.peace.api.controller;
+package com.br.edu.ufersa.prog_web.mec_tec.piace.api.controller;
 
-import com.br.edu.ufersa.prog_web.mec_tec.peace.api.dto.CreatePeaceDTO;
-import com.br.edu.ufersa.prog_web.mec_tec.peace.api.dto.ReturnPeaceDTO;
-import com.br.edu.ufersa.prog_web.mec_tec.peace.api.dto.UpdatePeaceDTO;
-import com.br.edu.ufersa.prog_web.mec_tec.peace.exception.PeaceAlreadyExist;
-import com.br.edu.ufersa.prog_web.mec_tec.peace.exception.PeaceNotFound;
-import com.br.edu.ufersa.prog_web.mec_tec.peace.service.PeaceService;
+import com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto.CreatePieceDTO;
+import com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto.ReturnPieceDTO;
+import com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto.UpdatePieceDTO;
+import com.br.edu.ufersa.prog_web.mec_tec.piace.exception.PeaceAlreadyExist;
+import com.br.edu.ufersa.prog_web.mec_tec.piace.exception.PeaceNotFound;
+import com.br.edu.ufersa.prog_web.mec_tec.piace.service.PieceService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/peace")
-public class PeaceController {
-    private final PeaceService service;
+public class PieceController {
+    private final PieceService service;
 
     @Autowired
-    public PeaceController(PeaceService service) {
+    public PieceController(PieceService service) {
         this.service = service;
     }
 
     @GetMapping()
-    public ResponseEntity<Page<ReturnPeaceDTO>> getAll(
+    public ResponseEntity<Page<ReturnPieceDTO>> getAll(
             @RequestParam(value = "searchTerm", required = false) String searchTerm,
             @RequestParam(
                     value = "page",
@@ -46,17 +43,17 @@ public class PeaceController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReturnPeaceDTO> getById(@PathVariable UUID id) {
+    public ResponseEntity<ReturnPieceDTO> getById(@PathVariable UUID id) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<ReturnPeaceDTO> post(@Valid @RequestBody CreatePeaceDTO dto) {
+    public ResponseEntity<ReturnPieceDTO> post(@Valid @RequestBody CreatePieceDTO dto) {
         return new ResponseEntity<>(service.create(dto), HttpStatus.CREATED);
     }
 
     @PutMapping()
-    public ResponseEntity<ReturnPeaceDTO> put(@Valid @RequestBody UpdatePeaceDTO dto) {
+    public ResponseEntity<ReturnPieceDTO> put(@Valid @RequestBody UpdatePieceDTO dto) {
         return new ResponseEntity<>(service.update(dto), HttpStatus.OK);
     }
 

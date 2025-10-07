@@ -1,8 +1,7 @@
-package com.br.edu.ufersa.prog_web.mec_tec.peace.api.dto;
+package com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreatePeaceDTO {
+public class CreatePieceDTO {
     @NotBlank
     private String name;
 

@@ -1,6 +1,5 @@
-package com.br.edu.ufersa.prog_web.mec_tec.peace.api.dto;
+package com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReturnPeaceDTO {
+public class ReturnPieceDTO {
     private UUID id;
     private String name;
     private double price;
