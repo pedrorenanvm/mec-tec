@@ -1,4 +1,4 @@
-package com.br.edu.ufersa.prog_web.mec_tec.peace.model.entity;
+package com.br.edu.ufersa.prog_web.mec_tec.piace.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,12 +7,12 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name = "tb_peace")
+@Table(name = "tb_piace")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Peace {
+public class Piece {
     @Id
     @GeneratedValue
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
