@@ -21,5 +21,6 @@ public class UpdateMachineDTO {
     @NotBlank(message = "Description cannot be empty or null")
     @Size(min = 10, message = "The description must have at least 10 characters")
     private String description;
+    @NotNull
     private UUID customerID;
 }

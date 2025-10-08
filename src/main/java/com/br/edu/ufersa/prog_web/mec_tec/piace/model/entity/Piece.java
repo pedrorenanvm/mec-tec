@@ -7,7 +7,7 @@ import java.util.UUID;
 
 
 @Entity
-@Table(name = "tb_piace")
+@Table(name = "tb_piece")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

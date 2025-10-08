@@ -3,8 +3,8 @@ package com.br.edu.ufersa.prog_web.mec_tec.piace.api.controller;
 import com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto.CreatePieceDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto.ReturnPieceDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto.UpdatePieceDTO;
-import com.br.edu.ufersa.prog_web.mec_tec.piace.exception.PeaceAlreadyExist;
-import com.br.edu.ufersa.prog_web.mec_tec.piace.exception.PeaceNotFound;
+import com.br.edu.ufersa.prog_web.mec_tec.piace.exception.PieceAlreadyExist;
+import com.br.edu.ufersa.prog_web.mec_tec.piace.exception.PieceNotFound;
 import com.br.edu.ufersa.prog_web.mec_tec.piace.service.PieceService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/peace")
+@RequestMapping("/api/v1/pieces")
 public class PieceController {
     private final PieceService service;
 
@@ -63,16 +63,16 @@ public class PieceController {
         return ResponseEntity.noContent().build();
     }
 
-    @ExceptionHandler(value = PeaceAlreadyExist.class)
-    public ResponseEntity<Map<String, Object>> peaceAlreadyExist(PeaceAlreadyExist ex) {
+    @ExceptionHandler(value = PieceAlreadyExist.class)
+    public ResponseEntity<Map<String, Object>> peaceAlreadyExist(PieceAlreadyExist ex) {
         Map<String, Object> map = new HashMap<>();
         map.put("statusCode", HttpStatus.UNPROCESSABLE_ENTITY.value());
         map.put("message", ex.getMessage());
         return new ResponseEntity<>(map, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
-    @ExceptionHandler(value = PeaceNotFound.class)
-    public ResponseEntity<Map<String, Object>> peaceNotFound(PeaceNotFound ex) {
+    @ExceptionHandler(value = PieceNotFound.class)
+    public ResponseEntity<Map<String, Object>> peaceNotFound(PieceNotFound ex) {
         Map<String, Object> map = new HashMap<>();
         map.put("statusCode", HttpStatus.NOT_FOUND.value());
         map.put("message", ex.getMessage());
