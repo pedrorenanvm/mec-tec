@@ -15,11 +15,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.UUID;
 
@@ -27,32 +25,32 @@ import java.util.UUID;
 @Service
 public class MachineService{
 
-    private final MachineRepository repository;
+    private final MachineRepository machineRepository;
     private final ModelMapper modelMapper;
-    private final CustomerRepository customer;
+    private final CustomerRepository customerRepository;
 
     @Autowired
-    public MachineService(MachineRepository machineRepository, ModelMapper modelMapper, CustomerRepository customer) {
-        this.repository = machineRepository;
+    public MachineService(MachineRepository machineRepository, ModelMapper modelMapper, CustomerRepository customerRepository) {
+        this.machineRepository = machineRepository;
         this.modelMapper = modelMapper;
-        this.customer = customer;
+        this.customerRepository = customerRepository;
     }
     @Transactional(readOnly = true)
     public ReturnMachineDTO findByID(UUID id){
-        Machine machine = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Machine not found"));
+        Machine machine = machineRepository.findById(id)
+                .orElseThrow(() -> new MachineNotFound("Machine not found"));
         return modelMapper.map(machine, ReturnMachineDTO.class);
     }
     @Transactional(readOnly = true)
     public Page<ReturnMachineDTO> findAll(Pageable pageable){
-        return repository.findAll(pageable)
+        return machineRepository.findAll(pageable)
                 .map( m -> modelMapper.map(m, ReturnMachineDTO.class));
     }
 
     @Transactional
     public ReturnMachineDTO create(CreateMachineDTO dto){
         //verificar se o cliente existe
-        Customer existingCustomer = customer.findById(dto.getCustomerID())
+        Customer existingCustomer = customerRepository.findById(dto.getCustomerID())
                 .orElseThrow(() -> new EntityNotFoundException("Customer with ID " + dto.getCustomerID() + " not found"));
 
         Category category = Category.valueOf(dto.getCategory().toUpperCase());
@@ -64,34 +62,35 @@ public class MachineService{
         newMachine.setCategory(category);
         newMachine.setCustomer(existingCustomer);
 
-        Machine savedMachine = repository.save(newMachine);
+        Machine savedMachine = machineRepository.save(newMachine);
 
         return modelMapper.map(savedMachine, ReturnMachineDTO.class);
     }
     @Transactional
     public ReturnMachineDTO update(UpdateMachineDTO dto){
-        Machine newMachine = repository.findById(dto.getId())
+        Machine existingMachine = machineRepository.findById(dto.getId())
                 .orElseThrow(() -> new MachineNotFound("Machine not found with ID " + dto.getId()));
+
+        Customer customer = customerRepository.findById(dto.getCustomerID())
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found with ID " + dto.getCustomerID()));
 
         Category category = Category.valueOf(dto.getCategory().toUpperCase());
 
-        newMachine.setModel(dto.getModel());
-        newMachine.setBrand(dto.getBrand());
-        newMachine.setDescription(dto.getDescription());
-        newMachine.setCategory(category);
-        newMachine.setCustomer(newMachine.getCustomer());
+        existingMachine.setModel(dto.getModel());
+        existingMachine.setBrand(dto.getBrand());
+        existingMachine.setDescription(dto.getDescription());
+        existingMachine.setCategory(category);
+        existingMachine.setCustomer(customer);
 
-        Machine savedMachine = repository.save(newMachine);
-
-       //modelMapper.map(machine, dto);
-       return modelMapper.map(savedMachine, ReturnMachineDTO.class);
+        Machine savedMachine = machineRepository.save(existingMachine);
+        return modelMapper.map(savedMachine, ReturnMachineDTO.class);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(UUID id){
-        Machine machine = repository.findById(id)
+        Machine machine = machineRepository.findById(id)
                 .orElseThrow(() -> new MachineNotFound("Machine not found with ID " + id));
-        repository.delete(machine);
+        machineRepository.delete(machine);
     }
 
 }
