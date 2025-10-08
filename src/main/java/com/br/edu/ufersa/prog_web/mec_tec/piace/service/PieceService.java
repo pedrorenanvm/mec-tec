@@ -3,8 +3,8 @@ package com.br.edu.ufersa.prog_web.mec_tec.piace.service;
 import com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto.CreatePieceDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto.ReturnPieceDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto.UpdatePieceDTO;
-import com.br.edu.ufersa.prog_web.mec_tec.piace.exception.PeaceAlreadyExist;
-import com.br.edu.ufersa.prog_web.mec_tec.piace.exception.PeaceNotFound;
+import com.br.edu.ufersa.prog_web.mec_tec.piace.exception.PieceAlreadyExist;
+import com.br.edu.ufersa.prog_web.mec_tec.piace.exception.PieceNotFound;
 import com.br.edu.ufersa.prog_web.mec_tec.piace.model.entity.Piece;
 import com.br.edu.ufersa.prog_web.mec_tec.piace.model.repository.PieceRepository;
 import org.modelmapper.ModelMapper;
@@ -43,13 +43,13 @@ public class PieceService {
 
     public ReturnPieceDTO findById(UUID id) {
         Piece peace = repository.findById(id)
-                .orElseThrow(() -> new PeaceNotFound("Peace not found."));
+                .orElseThrow(() -> new PieceNotFound("Peace not found."));
         return modelMapper.map(peace, ReturnPieceDTO.class);
     }
 
     public ReturnPieceDTO create(CreatePieceDTO dto) {
         if (repository.findByName(dto.getName()).isPresent()) {
-            throw new PeaceAlreadyExist("Peace with this name already exists.");
+            throw new PieceAlreadyExist("Peace with this name already exists.");
         }
 
         Piece peace = modelMapper.map(dto, Piece.class);
@@ -59,11 +59,11 @@ public class PieceService {
 
     public ReturnPieceDTO update(UpdatePieceDTO dto) {
         Piece peace = repository.findById(dto.getId())
-                .orElseThrow(() -> new PeaceNotFound("Peace not found."));
+                .orElseThrow(() -> new PieceNotFound("Peace not found."));
 
         if (!peace.getName().equals(dto.getName())
                 && repository.findByName(dto.getName()).isPresent()) {
-            throw new PeaceAlreadyExist("Peace with this name already exists.");
+            throw new PieceAlreadyExist("Peace with this name already exists.");
         }
 
         modelMapper.map(dto, peace);
@@ -73,7 +73,7 @@ public class PieceService {
 
     public void delete(UUID id) {
         Piece peace = repository.findById(id)
-                .orElseThrow(() -> new PeaceNotFound("Peace not found."));
+                .orElseThrow(() -> new PieceNotFound("Peace not found."));
         repository.delete(peace);
     }
 }
