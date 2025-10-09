@@ -2,12 +2,13 @@ package com.br.edu.ufersa.prog_web.mec_tec.order.model.entity;
 
 import com.br.edu.ufersa.prog_web.mec_tec.task.model.entity.Task;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
+import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -15,12 +16,13 @@ import java.util.Date;
 @AllArgsConstructor
 @Table(name = "tb_order_service")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Order_Items {
+@EntityListeners(AuditingEntityListener.class)
+public class Order_Items {  // Renomeado para padronização
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
     @EqualsAndHashCode.Include
-    @Column(updatable = false, nullable = false)
-    private String id;
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    private UUID id;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "order_id", nullable = false)
@@ -30,12 +32,14 @@ public class Order_Items {
     @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
-    @Column(nullable = false)
-    private Date createdAt;
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
 
+    @LastModifiedDate
     @Column(nullable = false)
-    private Date updatedAt;
+    private Instant updatedAt;
 
-    @Column(nullable = true)
-    private Date deletedAt;
+    @Column
+    private Instant deletedAt;
 }
