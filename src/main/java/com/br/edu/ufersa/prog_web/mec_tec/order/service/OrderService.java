@@ -1,9 +1,6 @@
 package com.br.edu.ufersa.prog_web.mec_tec.order.service;
 
-import com.br.edu.ufersa.prog_web.mec_tec.order.api.dto.CreateOrderDTO;
-import com.br.edu.ufersa.prog_web.mec_tec.order.api.dto.CreateOrderItemDTO;
-import com.br.edu.ufersa.prog_web.mec_tec.order.api.dto.ReturnAllOrderDTO;
-import com.br.edu.ufersa.prog_web.mec_tec.order.api.dto.ReturnOrderDTO;
+import com.br.edu.ufersa.prog_web.mec_tec.order.api.dto.*;
 import com.br.edu.ufersa.prog_web.mec_tec.order.execption.OrderNotFoundExecption;
 import com.br.edu.ufersa.prog_web.mec_tec.order.model.entity.Order;
 import com.br.edu.ufersa.prog_web.mec_tec.order.model.entity.Order_Items;
@@ -12,6 +9,7 @@ import com.br.edu.ufersa.prog_web.mec_tec.order.model.repository.OrderRepository
 import com.br.edu.ufersa.prog_web.mec_tec.task.api.dto.ReturnTaskDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.task.model.entity.Task;
 import com.br.edu.ufersa.prog_web.mec_tec.task.service.TaskService;
+import org.hibernate.Remove;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -84,6 +82,30 @@ public class OrderService {
                     return dto;
                 });
     }
+
+    @Transactional
+    public ReturnOrderDTO removeTasksToOrder(RemoveTaskOfOrderDTO dto) {
+        Order order = orderRepository.findById(dto.getOrderId())
+                .orElseThrow(() -> new OrderNotFoundExecption("Order not found"));
+
+        UUID taskId = UUID.fromString(dto.getTaskId());
+
+        Order_Items item = orderItemsRepository
+                .findByOrderIdAndTaskId(order.getId(), taskId)
+                .orElseThrow(() -> new OrderNotFoundExecption("Task not found in this order"));
+
+        orderItemsRepository.delete(item);
+
+        ReturnOrderDTO returnDTO = modelMapper.map(order, ReturnOrderDTO.class);
+        returnDTO.setTasks(
+                orderItemsRepository.findByOrderId(order.getId())
+                        .stream()
+                        .map(Order_Items::getTask)
+                        .collect(Collectors.toList())
+        );
+        return returnDTO;
+    }
+
 
     @Transactional
     public void delete(Long id) {

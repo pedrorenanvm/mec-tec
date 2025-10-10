@@ -1,6 +1,7 @@
 package com.br.edu.ufersa.prog_web.mec_tec.order.api.controller;
 
 import com.br.edu.ufersa.prog_web.mec_tec.order.api.dto.CreateOrderDTO;
+import com.br.edu.ufersa.prog_web.mec_tec.order.api.dto.RemoveTaskOfOrderDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.order.api.dto.ReturnAllOrderDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.order.api.dto.ReturnOrderDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.order.service.OrderService;
@@ -44,6 +45,16 @@ public class OrderController {
     public ResponseEntity<ReturnOrderDTO> getOrder(@PathVariable Long id) {
         return new ResponseEntity<>(service.findById(id), HttpStatus.OK);
     }
+
+    @DeleteMapping("/task")
+    public ResponseEntity<ReturnOrderDTO> removeTaskFromOrder(
+            @RequestParam Long orderId,
+            @RequestParam String taskId) {
+
+        RemoveTaskOfOrderDTO dto = new RemoveTaskOfOrderDTO(orderId, taskId);
+        return ResponseEntity.ok(service.removeTasksToOrder(dto));
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){
