@@ -9,6 +9,9 @@ import com.br.edu.ufersa.prog_web.mec_tec.customer.model.entity.Customer;
 import com.br.edu.ufersa.prog_web.mec_tec.customer.model.repository.CustomerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,9 +28,17 @@ public class CustomerService {
         this.modelMapper = modelMapper;
     }
 
-    public List<ReturnCustomerDTO> findAll() {
-        List<Customer> customers = repository.findAll();
-        return customers.stream().map(c -> modelMapper.map(c, ReturnCustomerDTO.class)).toList();
+    public Page<ReturnCustomerDTO> findAll(String searchTerm , int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Customer> pageCustomer;
+
+        if (searchTerm == null || searchTerm.isBlank()) {
+            pageCustomer = repository.findAll(pageable);
+        } else {
+            pageCustomer = repository.findAll(searchTerm,pageable);
+        }
+
+        return pageCustomer.map(c -> modelMapper.map(c, ReturnCustomerDTO.class));
     }
 
     public ReturnCustomerDTO findById(UUID id) {

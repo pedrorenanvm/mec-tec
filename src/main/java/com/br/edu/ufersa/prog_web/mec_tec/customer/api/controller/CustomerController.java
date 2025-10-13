@@ -8,6 +8,7 @@ import com.br.edu.ufersa.prog_web.mec_tec.customer.exception.CustomerNotFoundExc
 import com.br.edu.ufersa.prog_web.mec_tec.customer.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +29,12 @@ public class CustomerController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ReturnCustomerDTO>> getAll() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+    public ResponseEntity<Page<ReturnCustomerDTO>> getAll(
+            @RequestParam(value = "searchTerm", required = false) String searchTerm,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size
+    ) {
+        return new ResponseEntity<>(service.findAll(searchTerm,page,size), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
