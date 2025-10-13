@@ -59,7 +59,7 @@ public class CustomerController {
     }
 
     @ExceptionHandler(value = CustomerAlreadyExistsException.class)
-    public ResponseEntity<Map<String, Object>> CustomerAlreadyExistsException(CustomerAlreadyExistsException ex) {
+    public ResponseEntity<Map<String, Object>> handleCustomerAlreadyExistsException(CustomerAlreadyExistsException ex) {
         Map<String, Object> map = new HashMap<>();
         map.put("statusCode", HttpStatus.UNPROCESSABLE_ENTITY.value());
         map.put("message", ex.getMessage());
@@ -67,7 +67,7 @@ public class CustomerController {
     }
 
     @ExceptionHandler(value = CustomerNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> CustomerAlreadyExistsException(CustomerNotFoundException ex) {
+    public ResponseEntity<Map<String, Object>> handleCustomerNotFoundException(CustomerNotFoundException ex) {
         Map<String, Object> map = new HashMap<>();
         map.put("statusCode", HttpStatus.NOT_FOUND.value());
         map.put("message", ex.getMessage());
