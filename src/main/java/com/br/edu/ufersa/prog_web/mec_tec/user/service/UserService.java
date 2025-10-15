@@ -11,6 +11,9 @@ import com.br.edu.ufersa.prog_web.mec_tec.user.model.entity.User;
 import com.br.edu.ufersa.prog_web.mec_tec.user.model.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,9 +30,17 @@ public class UserService {
         this.modelMapper = modelMapper;
     }
 
-    public List<ReturnUserDTO> findAll() {
-        List<User> users = repository.findAll();
-        return users.stream().map(u -> modelMapper.map(u, ReturnUserDTO.class)).toList();
+    public Page<ReturnUserDTO> findAll(String searchTerm, int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        Page<User> pageUser;
+
+        if (searchTerm == null || searchTerm.isBlank()) {
+            pageUser = repository.findAll(pageable);
+        } else {
+            pageUser = repository.findAll(searchTerm,pageable);
+        }
+
+        return pageUser.map(u -> modelMapper.map(u, ReturnUserDTO.class));
     }
 
     public ReturnUserDTO findById(UUID id) {

@@ -1,36 +1,45 @@
 package com.br.edu.ufersa.prog_web.mec_tec.order.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Data
 @AllArgsConstructor
-@Table(name = "tb_order")
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@Table(name = "tb_order")
+@EntityListeners(AuditingEntityListener.class)
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
-    private Date createdAt;
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
 
+    @LastModifiedDate
     @Column(nullable = false)
-    private Date updatedAt;
+    private Instant updatedAt;
 
-    @Column(nullable = true)
-    private Date deletedAt;
+    @Column
+    private Instant deletedAt;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order_Items> items;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) createdAt = Instant.now();
+    }
 }
