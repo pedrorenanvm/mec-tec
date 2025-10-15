@@ -2,6 +2,7 @@ package com.br.edu.ufersa.prog_web.mec_tec.task.api.dto;
 
 import com.br.edu.ufersa.prog_web.mec_tec.machine.api.dto.ReturnMachineDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.piace.api.dto.ReturnPieceDTO;
+import com.br.edu.ufersa.prog_web.mec_tec.task.model.entity.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class ReturnTaskDTO {
     private String name;
     private Double price;
     private String description;
+    private TaskStatus status;
     private ReturnMachineDTO machine;
     private List <ReturnPieceDTO> pieces;
 

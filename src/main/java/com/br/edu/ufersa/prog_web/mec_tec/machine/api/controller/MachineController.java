@@ -28,8 +28,16 @@ public class MachineController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<ReturnMachineDTO>> findAll(Pageable pageable){
-        return new ResponseEntity<>(service.findAll(pageable), HttpStatus.OK);
+    public ResponseEntity<Page<ReturnMachineDTO>> findAll(
+            @RequestParam(value = "customerName", required = false) String customerName,
+            @RequestParam(value = "brand", required = false) String brand,
+            @RequestParam(value = "model", required = false) String model,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ){
+
+        Page<ReturnMachineDTO> machines = service.findAll(customerName, brand, model, page, size);
+        return new ResponseEntity<>(machines,HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
