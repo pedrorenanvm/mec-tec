@@ -94,4 +94,17 @@ public class UserService {
         user.setId(id);
         repository.delete(user);
     }
+
+    // Em UserService
+    public User findByUsername(String username) {
+        return repository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado: " + username));
+    }
+    public boolean existsByUsername(String username) {
+        return repository.findByUsername(username).isPresent();
+    }
+    public void save(User user) {
+        repository.save(user);
+    }
+
 }
