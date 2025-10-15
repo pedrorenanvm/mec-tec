@@ -12,6 +12,7 @@ import com.br.edu.ufersa.prog_web.mec_tec.task.api.dto.ReturnTaskDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.task.api.dto.UpdateTaskDTO;
 import com.br.edu.ufersa.prog_web.mec_tec.task.exception.TaskNotFound;
 import com.br.edu.ufersa.prog_web.mec_tec.task.model.entity.Task;
+import com.br.edu.ufersa.prog_web.mec_tec.task.model.entity.TaskStatus;
 import com.br.edu.ufersa.prog_web.mec_tec.task.model.repository.TaskRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -83,6 +84,7 @@ public class TaskService {
         newTask.setDescription(dto.getDescription());
         newTask.setMachine(machine);
         newTask.setPieces(pieces);
+        newTask.setStatus(TaskStatus.PENDING); // já deixa setado como pedente
 
         Task savedTask = taskRepository.save(newTask);
         return modelMapper.map(savedTask, ReturnTaskDTO.class);
@@ -105,9 +107,12 @@ public class TaskService {
             }
         }
 
+        TaskStatus newStatus = TaskStatus.valueOf(dto.getStatus().toUpperCase());
+
         existingTask.setName(dto.getName());
         existingTask.setPrice(dto.getPrice());
         existingTask.setDescription(dto.getDescription());
+        existingTask.setStatus(newStatus);
         existingTask.setMachine(machine);
         existingTask.setPieces(pieces);
 
