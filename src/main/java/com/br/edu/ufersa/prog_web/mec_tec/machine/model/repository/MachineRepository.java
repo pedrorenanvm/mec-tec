@@ -14,15 +14,15 @@ import java.util.UUID;
 public interface MachineRepository extends JpaRepository<Machine, UUID> {
 
     // busca por modelo
-    @Query("SELECT m FROM Machine m WHERE LOWER(m.model) LIKE LOWER(CONCANT('%', :model, '%'))")
+    @Query("SELECT m FROM Machine m WHERE LOWER(m.model) LIKE LOWER(CONCAT('%', :model, '%'))")
     Page<Machine> findByModel(@Param("model") String model, Pageable pageable);
 
     //busca por brand
-    @Query("SELECT m FROM Machine m WHERE LOWER(m.brand) LIKE LOWER(CONCANT('%', :brand, '%'))")
+    @Query("SELECT m FROM Machine m WHERE LOWER(m.brand) LIKE LOWER(CONCAT('%', :brand, '%'))")
     Page<Machine> findByBrand(@Param("brand") String brand , Pageable pageable);
 
     // busca por cliente
-    @Query("SELECT m FROM Machine m JOIN m.customer c WHERE LOWER(c.name) LIKE LOWER(CONCANT('%', :customerName, '%'))")
+    @Query("SELECT m FROM Machine m JOIN m.customer c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :customerName, '%'))")
     Page<Machine> findByCustomerName(@Param("customerName") String customerName, Pageable pageable);
 
 }
