@@ -2,6 +2,7 @@ package com.br.edu.ufersa.prog_web.mec_tec.task.api.dto;
 
 import com.br.edu.ufersa.prog_web.mec_tec.config.validation.EnumValidator;
 import com.br.edu.ufersa.prog_web.mec_tec.machine.model.entity.Category;
+import com.br.edu.ufersa.prog_web.mec_tec.task.model.entity.TaskStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -26,6 +27,10 @@ public class UpdateTaskDTO {
     private Double price;
 
     private String description;
+
+    @EnumValidator(enumClass = TaskStatus.class, message = "Invalid status value")
+    @NotBlank(message = "Status cannot be null or empty")
+    private String status;
 
     @NotNull(message = "Machine ID is mandatory")
     private UUID machineId;

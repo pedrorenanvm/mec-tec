@@ -60,3 +60,4 @@ Thumbs.db
 *.war
 *.ear
 *.class
+.docker
