@@ -8,6 +8,7 @@ import com.br.edu.ufersa.prog_web.mec_tec.customer.exception.CustomerNotFoundExc
 import com.br.edu.ufersa.prog_web.mec_tec.customer.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +29,12 @@ public class CustomerController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ReturnCustomerDTO>> getAll() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+    public ResponseEntity<Page<ReturnCustomerDTO>> getAll(
+            @RequestParam(value = "searchTerm", required = false) String searchTerm,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size
+    ) {
+        return new ResponseEntity<>(service.findAll(searchTerm,page,size), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -54,7 +59,7 @@ public class CustomerController {
     }
 
     @ExceptionHandler(value = CustomerAlreadyExistsException.class)
-    public ResponseEntity<Map<String, Object>> CustomerAlreadyExistsException(CustomerAlreadyExistsException ex) {
+    public ResponseEntity<Map<String, Object>> handleCustomerAlreadyExistsException(CustomerAlreadyExistsException ex) {
         Map<String, Object> map = new HashMap<>();
         map.put("statusCode", HttpStatus.UNPROCESSABLE_ENTITY.value());
         map.put("message", ex.getMessage());
@@ -62,7 +67,7 @@ public class CustomerController {
     }
 
     @ExceptionHandler(value = CustomerNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> CustomerAlreadyExistsException(CustomerNotFoundException ex) {
+    public ResponseEntity<Map<String, Object>> handleCustomerNotFoundException(CustomerNotFoundException ex) {
         Map<String, Object> map = new HashMap<>();
         map.put("statusCode", HttpStatus.NOT_FOUND.value());
         map.put("message", ex.getMessage());

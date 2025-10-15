@@ -9,12 +9,12 @@ import com.br.edu.ufersa.prog_web.mec_tec.user.exception.UserNotFoundException;
 import com.br.edu.ufersa.prog_web.mec_tec.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,8 +29,12 @@ public class UserController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ReturnUserDTO>> getAll() {
-        return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
+    public ResponseEntity<Page<ReturnUserDTO>> getAll(
+            @RequestParam(value = "searchTerm", required = false) String searchTerm,
+            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size
+    ) {
+        return new ResponseEntity<>(service.findAll(searchTerm,page,size), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

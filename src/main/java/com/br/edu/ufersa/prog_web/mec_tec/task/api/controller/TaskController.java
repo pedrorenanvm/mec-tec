@@ -29,17 +29,15 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<Page<ReturnTaskDTO>> findAll(
-            @RequestParam(value = "searchTerm", required = false) String searchTerm,
-            @RequestParam(
-                    value = "page",
-                    required = false,
-                    defaultValue = "0") int page,
-            @RequestParam(
-                    value = "size",
-                    required = false,
-                    defaultValue = "10") int size){
-        String term = (searchTerm == null || searchTerm.isBlank()) ? "" : searchTerm.toLowerCase();
-        return new ResponseEntity<>(taskService.findAll(term, page, size), HttpStatus.OK);
+        @RequestParam(value = "customerName", required = false) String customerName,
+        @RequestParam(name = "machineModel", required = false) String machineModel,
+        @RequestParam(name = "status", required = false) String status,
+
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "10") int size) {
+
+        Page<ReturnTaskDTO> tasks = taskService.findAll(customerName, machineModel, status, page, size);
+        return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

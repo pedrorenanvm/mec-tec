@@ -33,6 +33,7 @@ public class Machine {
     @Column(nullable = false)
     private String brand;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category category;
 
