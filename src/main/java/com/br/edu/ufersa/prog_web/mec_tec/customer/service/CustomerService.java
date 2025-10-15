@@ -9,6 +9,9 @@ import com.br.edu.ufersa.prog_web.mec_tec.customer.model.entity.Customer;
 import com.br.edu.ufersa.prog_web.mec_tec.customer.model.repository.CustomerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,9 +28,17 @@ public class CustomerService {
         this.modelMapper = modelMapper;
     }
 
-    public List<ReturnCustomerDTO> findAll() {
-        List<Customer> customers = repository.findAll();
-        return customers.stream().map(c -> modelMapper.map(c, ReturnCustomerDTO.class)).toList();
+    public Page<ReturnCustomerDTO> findAll(String searchTerm , int page, int size) {
+        Pageable pageable = PageRequest.of(page,size);
+        Page<Customer> pageCustomer;
+
+        if (searchTerm == null || searchTerm.isBlank()) {
+            pageCustomer = repository.findAll(pageable);
+        } else {
+            pageCustomer = repository.findAll(searchTerm,pageable);
+        }
+
+        return pageCustomer.map(c -> modelMapper.map(c, ReturnCustomerDTO.class));
     }
 
     public ReturnCustomerDTO findById(UUID id) {
@@ -37,15 +48,15 @@ public class CustomerService {
 
     public ReturnCustomerDTO create(CreateCustomerDTO dto) {
         if (repository.findByCpf(dto.getCpf()).isPresent()) {
-            throw new CustomerAlreadyExistsException("A customer with this cpf already exists.");
+            throw new CustomerAlreadyExistsException("A customer with this cpf, phone or email already exists.");
         }
 
         if (repository.findByPhone(dto.getPhone()).isPresent()) {
-            throw new CustomerAlreadyExistsException("A customer with this phone already exists.");
+            throw new CustomerAlreadyExistsException("A customer with this cpf, phone or email already exists.");
         }
 
         if (repository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new CustomerAlreadyExistsException("A customer with this email already exists.");
+            throw new CustomerAlreadyExistsException("A customer with this cpf, phone or email already exists.");
         }
 
         Customer customer = modelMapper.map(dto, Customer.class);
@@ -58,15 +69,15 @@ public class CustomerService {
         Customer customer = repository.findById(dto.getId()).orElseThrow(() -> new CustomerNotFoundException("Customer not found."));
 
         if (!customer.getCpf().equals(dto.getCpf()) && repository.findByCpf(dto.getCpf()).isPresent()) {
-            throw new CustomerAlreadyExistsException("A customer with this cpf already exists.");
+            throw new CustomerAlreadyExistsException("A customer with this cpf, phone or email already exists.");
         }
 
         if (!customer.getPhone().equals(dto.getPhone()) && repository.findByPhone(dto.getPhone()).isPresent()) {
-            throw new CustomerAlreadyExistsException("A customer with this phone already exists.");
+            throw new CustomerAlreadyExistsException("A customer with this cpf, phone or email already exists.");
         }
 
         if (!customer.getEmail().equals(dto.getEmail()) && repository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new CustomerAlreadyExistsException("A customer with this email already exists.");
+            throw new CustomerAlreadyExistsException("A customer with this cpf, phone or email already exists.");
         }
 
         modelMapper.map(dto, customer);
