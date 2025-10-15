@@ -44,14 +44,24 @@ public class TaskService {
 
 
     @Transactional
-    public Page<ReturnTaskDTO> findAll(String searchTerm, int page, int size) {
+    public Page<ReturnTaskDTO> findAll(String customerName, String machineModel, String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Task> pageResult;
 
-        if (searchTerm == null || searchTerm.isBlank()) {
-            pageResult = taskRepository.findAll(pageable);
+        if(status != null && !status.isBlank()){
+            try {
+                TaskStatus statusEnum = TaskStatus.valueOf(status.toUpperCase());
+                pageResult = taskRepository.findByStatus(statusEnum, pageable);
+            }catch (IllegalArgumentException e){
+                throw new IllegalArgumentException("Invalid status value provided: '" + status +
+                        "'. Accepted values are PENDING, IN_PROGRESS, COMPLETED, CANCELED.");
+            }
+        } else if ( customerName != null && !customerName.isBlank()){
+            pageResult = taskRepository.findByCustomerName(customerName, pageable);
+        } else if ( machineModel != null && !machineModel.isBlank()){
+            pageResult = taskRepository.findByMachineModel(machineModel, pageable);
         } else {
-            pageResult = taskRepository.findAllPaginate(searchTerm, pageable);
+            pageResult = taskRepository.findAll(pageable);
         }
 
         return pageResult.map(task -> modelMapper.map(task, ReturnTaskDTO.class));
