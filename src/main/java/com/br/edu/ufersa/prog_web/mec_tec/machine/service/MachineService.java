@@ -14,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -42,9 +43,21 @@ public class MachineService{
         return modelMapper.map(machine, ReturnMachineDTO.class);
     }
     @Transactional(readOnly = true)
-    public Page<ReturnMachineDTO> findAll(Pageable pageable){
-        return machineRepository.findAll(pageable)
-                .map( m -> modelMapper.map(m, ReturnMachineDTO.class));
+    public Page<ReturnMachineDTO> findAll(String customerName, String brand, String model, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Machine> pageResult;
+
+        if(customerName != null && !customerName.isBlank()) {
+            pageResult = machineRepository.findByCustomerName(customerName, pageable);
+        } else if (brand != null && !brand.isBlank()) {
+            pageResult = machineRepository.findByBrand(brand, pageable);
+        } else if (model != null && !model.isBlank()) {
+            pageResult = machineRepository.findByModel(model, pageable);
+        } else {
+            pageResult = machineRepository.findAll(pageable);
+        }
+
+        return pageResult.map(machine -> modelMapper.map(machine, ReturnMachineDTO.class));
     }
 
     @Transactional
