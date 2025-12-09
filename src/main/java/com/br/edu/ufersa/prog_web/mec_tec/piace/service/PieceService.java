@@ -57,19 +57,19 @@ public class PieceService {
         return modelMapper.map(created, ReturnPieceDTO.class);
     }
 
-    public ReturnPieceDTO update(UpdatePieceDTO dto) {
-        Piece peace = repository.findById(dto.getId())
-                .orElseThrow(() -> new PieceNotFound("Peace not found."));
+    public ReturnPieceDTO update(UUID id, UpdatePieceDTO dto) {
+        Piece piece = repository.findById(id)
+                .orElseThrow(() -> new PieceNotFound("Piece not found."));
 
-        if (!peace.getName().equals(dto.getName())
+        if (!piece.getName().equals(dto.getName())
                 && repository.findByName(dto.getName()).isPresent()) {
-            throw new PieceAlreadyExist("Peace with this name already exists.");
+            throw new PieceAlreadyExist("Piece with this name already exists.");
         }
-
-        modelMapper.map(dto, peace);
-        Piece updated = repository.save(peace);
+        modelMapper.map(dto, piece);
+        Piece updated = repository.save(piece);
         return modelMapper.map(updated, ReturnPieceDTO.class);
     }
+
 
     public void delete(UUID id) {
         Piece peace = repository.findById(id)

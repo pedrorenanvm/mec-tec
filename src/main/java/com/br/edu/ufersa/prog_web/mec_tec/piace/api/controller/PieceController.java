@@ -52,11 +52,13 @@ public class PieceController {
         return new ResponseEntity<>(service.create(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping()
-    public ResponseEntity<ReturnPieceDTO> put(@Valid @RequestBody UpdatePieceDTO dto) {
-        return new ResponseEntity<>(service.update(dto), HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<ReturnPieceDTO> put(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdatePieceDTO dto
+    ) {
+        return ResponseEntity.ok(service.update(id, dto));
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
