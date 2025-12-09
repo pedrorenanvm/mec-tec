@@ -28,6 +28,11 @@ public class OrderController {
         return  ResponseEntity.ok(service.create(dto));
     }
 
+    @PatchMapping("/{id}/close")
+    public ResponseEntity<ReturnOrderDTO> closeOrder(@PathVariable Long id) {
+        return ResponseEntity.ok(service.closeOrder(id));
+    }
+
     @GetMapping()
     public ResponseEntity<Page<ReturnAllOrderDTO>> getAllOrders(
             @RequestParam(
