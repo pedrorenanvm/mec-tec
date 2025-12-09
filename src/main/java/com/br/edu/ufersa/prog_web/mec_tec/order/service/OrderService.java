@@ -1,6 +1,7 @@
 package com.br.edu.ufersa.prog_web.mec_tec.order.service;
 
 import com.br.edu.ufersa.prog_web.mec_tec.order.api.dto.*;
+import com.br.edu.ufersa.prog_web.mec_tec.order.api.enums.OrderStatus;
 import com.br.edu.ufersa.prog_web.mec_tec.order.execption.OrderNotFoundExecption;
 import com.br.edu.ufersa.prog_web.mec_tec.order.model.entity.Order;
 import com.br.edu.ufersa.prog_web.mec_tec.order.model.entity.Order_Items;
@@ -38,6 +39,24 @@ public class OrderService {
         this.taskService = taskService;
     }
 
+    @Transactional
+    public ReturnOrderDTO closeOrder(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundExecption("Order not found"));
+
+        order.setStatus(OrderStatus.CLOSE);
+
+        orderRepository.save(order);
+
+        ReturnOrderDTO dto = modelMapper.map(order, ReturnOrderDTO.class);
+        dto.setTasks(
+                orderItemsRepository.findByOrderId(order.getId())
+                        .stream()
+                        .map(Order_Items::getTask)
+                        .collect(Collectors.toList())
+        );
+        return dto;
+    }
     @Transactional(readOnly = true)
     public ReturnOrderDTO findById(Long id) {
         Order order = orderRepository.findById(id)
@@ -78,6 +97,7 @@ public class OrderService {
                     ReturnAllOrderDTO dto = new ReturnAllOrderDTO();
                     dto.setOrderId(order.getId());
                     dto.setDescription(order.getDescription());
+                    dto.setStatus(order.getStatus());
                     dto.setCreatedAt(Date.from(order.getCreatedAt()));
                     return dto;
                 });

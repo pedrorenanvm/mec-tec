@@ -1,5 +1,6 @@
 package com.br.edu.ufersa.prog_web.mec_tec.order.api.dto;
 
+import com.br.edu.ufersa.prog_web.mec_tec.order.api.enums.OrderStatus;
 import com.br.edu.ufersa.prog_web.mec_tec.task.model.entity.Task;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,8 @@ public class ReturnOrderDTO {
     private String description;
 
     private Instant createdAt;
+
+    private OrderStatus status;
 
     private List<Task> tasks;
 }
