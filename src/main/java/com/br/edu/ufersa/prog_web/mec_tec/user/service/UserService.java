@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -79,8 +78,8 @@ public class UserService {
         repository.save(user);
     }
 
-    public void passwordChange(PasswordChangeUserDTO dto) {
-        User user = repository.findById(dto.getId()).orElseThrow(() -> new UserNotFoundException("User not found."));
+    public void passwordChange(String username,PasswordChangeUserDTO dto) {
+        User user = repository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found."));
 
         if (!passwordEncoder.matches(dto.getOldPassword(),user.getPassword())) {
             throw new UserInvalidPasswordException("Old password is incorrect.");
