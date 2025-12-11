@@ -57,20 +57,4 @@ public class CustomerController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
-    @ExceptionHandler(value = CustomerAlreadyExistsException.class)
-    public ResponseEntity<Map<String, Object>> handleCustomerAlreadyExistsException(CustomerAlreadyExistsException ex) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("statusCode", HttpStatus.UNPROCESSABLE_ENTITY.value());
-        map.put("message", ex.getMessage());
-        return new ResponseEntity<>(map, HttpStatus.UNPROCESSABLE_ENTITY);
-    }
-
-    @ExceptionHandler(value = CustomerNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleCustomerNotFoundException(CustomerNotFoundException ex) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("statusCode", HttpStatus.NOT_FOUND.value());
-        map.put("message", ex.getMessage());
-        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-    }
 }
