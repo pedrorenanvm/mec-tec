@@ -12,8 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PasswordChangeUserDTO {
-    @NotBlank
-    @Size(min = 5, max = 20, message = "Old password must contain 5 to 20 characters")
     private String oldPassword;
 
     @NotBlank
