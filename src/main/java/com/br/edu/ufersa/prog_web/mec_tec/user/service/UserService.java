@@ -14,18 +14,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
 public class UserService {
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserService(UserRepository repository, ModelMapper modelMapper) {
+    public UserService(PasswordEncoder passwordEncoder, UserRepository repository, ModelMapper modelMapper) {
+        this.passwordEncoder = passwordEncoder;
         this.repository = repository;
         this.modelMapper = modelMapper;
     }
@@ -59,7 +61,7 @@ public class UserService {
 
         User user = modelMapper.map(dto, User.class);
         user.setRole(Role.USER);
-        user.setPassword("senha123");
+        user.setPassword(passwordEncoder.encode("senha123"));
         user.setRequiresPasswordChange(true);
 
         User createUser = repository.save(user);
@@ -70,20 +72,20 @@ public class UserService {
     public void passwordReset(UUID id) {
         User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found."));
 
-        user.setPassword("senha123");
+        user.setPassword(passwordEncoder.encode("senha123"));
         user.setRequiresPasswordChange(true);
 
         repository.save(user);
     }
 
-    public void passwordChange(PasswordChangeUserDTO dto) {
-        User user = repository.findById(dto.getId()).orElseThrow(() -> new UserNotFoundException("User not found."));
+    public void passwordChange(String username,PasswordChangeUserDTO dto) {
+        User user = repository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found."));
 
-        if (!user.getPassword().equals(dto.getOldPassword())) {
+        if (!passwordEncoder.matches(dto.getOldPassword(),user.getPassword())) {
             throw new UserInvalidPasswordException("Old password is incorrect.");
         }
 
-        user.setPassword(dto.getNewPassword());
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         user.setRequiresPasswordChange(false);
 
         repository.save(user);
@@ -103,6 +105,7 @@ public class UserService {
     public boolean existsByUsername(String username) {
         return repository.findByUsername(username).isPresent();
     }
+
     public void save(User user) {
         repository.save(user);
     }

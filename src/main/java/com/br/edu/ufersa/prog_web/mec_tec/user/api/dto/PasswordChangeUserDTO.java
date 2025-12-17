@@ -7,17 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class PasswordChangeUserDTO {
-    private UUID id;
-
-    @NotBlank
-    @Size(min = 5, max = 20, message = "Old password must contain 5 to 20 characters")
     private String oldPassword;
 
     @NotBlank
